@@ -80,10 +80,45 @@ mysql -u root
 -> CREATE DATABASE articles; // articlesというDBを作る
 -> USE articles; // 使うDBを選択
 -> SELECT DATABASE(); // 現在使っているDBを確認
+-> SHOW columns FROM table_name; //テーブル構造を確認
+-> show tables; // テーブル一覧
+-> ALTER TABLE tbl_name RENAME TO new_tbl_name　// テーブル名変更
 ```
 
 起動後、import.sqlをmysqlで実行
 
 ```SQL
-source /フルパス/import.sql
+source /フルパス/import.sql;
+```
+
+database.ymlを作る
+
+```yml
+development:
+  adapter: mysql2
+  database: articles
+  host: localhost
+  username: root
+  password:
+  encoding: utf8
+```
+
+app.rbにdatabase.ymlを読み込ませる
+
+```ruby
+# database.ymlを読み込んでくれえ
+ActiveRecord::Base.configurations = YAML.load_file('database.yml')
+# development設定でお願い
+ActiveRecord::Base.establish_connection(:development)
+
+# table名を単数形大文字にする
+class Article < ActiveRecord::Base
+end
+```
+
+app.rbやirbでrequireを実行する場合はbundle execが必要になる。
+
+```bash
+bundle exec ruby app.rb
+bundle exec irb
 ```

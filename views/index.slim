@@ -1,0 +1,18 @@
+h2.new-title 新しい記事投稿
+
+form method="post" action="/article_post"
+  .title-body-content
+    / nameの値をparamsで取得する
+    p タイトル
+    input.title type="text" name="title"
+    br
+    p 本文
+    textarea.body type="text" name="body"
+  br
+  p カテゴリーを選択
+  - @category.each do |cate|
+    p
+      input type="radio" name="cate_id" value="#{cate.cate_name}" 　
+      = cate.cate_name
+
+  input type="submit" value="投稿"

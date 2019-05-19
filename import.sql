@@ -1,5 +1,7 @@
+-- データベースの構造
 CREATE TABLE posts (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  cate_id INT,
   title VARCHAR(255) NOT NULL,
   body TEXT NOT NULL,
   created_at DATETIME NOT NULL,
@@ -7,7 +9,7 @@ CREATE TABLE posts (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE category (
+CREATE TABLE categories (
   cate_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   cate_name VARCHAR(255) NOT NULL,
   PRIMARY KEY(cate_id)
