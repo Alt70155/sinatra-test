@@ -1,6 +1,6 @@
 h2.new-title 新しい記事投稿
 
-form method="post" action="/article_post"
+form method="post" action="/article_post" enctype="multipart/form-data"
   .title-body-content
     / nameの値をparamsで取得する
     p タイトル
@@ -10,9 +10,11 @@ form method="post" action="/article_post"
     textarea.body type="text" name="body"
   br
   p カテゴリーを選択
-  - @category.each do |cate|
+  - @category.each_with_index do |cate, i|
     p
-      input type="radio" name="cate_id" value="#{cate.cate_name}" 　
+      input type="radio" name="cate_id" value="#{i+=1}" 　
       = cate.cate_name
 
+  input type="file" name="file"
+  br
   input type="submit" value="投稿"

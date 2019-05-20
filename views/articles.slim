@@ -14,3 +14,8 @@
   ul
   - @category.each do |f|
     li= f.cate_name
+
+  h3= "session: #{session[:file_name]}"
+  h3= "file_name: #{@file_name}"
+
+  img src="/img/#{@file_name}"
