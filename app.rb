@@ -27,7 +27,6 @@ end
 get '/articles/:id' do
   @post = Post.find(params[:id])
   @category = Category.where(cate_id: @post.cate_id)
-  @file_name = session[:file_name]
   slim :articles
 end
 
@@ -35,13 +34,12 @@ post '/article_post' do
   post_data = Post.create(
     title:   params[:title],
     body:    params[:body],
-    cate_id: params[:cate_id]
+    cate_id: params[:cate_id],
+    top_picture: params[:file][:filename]
   )
   # file受け取り
-  @file_name = params[:file][:filename]
-  session[:file_name] = @file_name
   file = params[:file][:tempfile]
-  File.open("public/img/#{@file_name}", 'wb') do |f|
+  File.open("public/img/#{post_data.top_picture}", 'wb') do |f|
     f.write(file.read)
   end
 

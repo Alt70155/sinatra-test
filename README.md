@@ -1,4 +1,4 @@
-sinatra環境構築メモ
+# sinatra環境構築メモ
 
 ## まずGemfileを生成する
 
@@ -83,6 +83,8 @@ mysql -u root
 -> SHOW columns FROM table_name; //テーブル構造を確認
 -> show tables; // テーブル一覧
 -> ALTER TABLE tbl_name RENAME TO new_tbl_name　// テーブル名変更
+-> ALTER TABLE posts AUTO_INCREMENT = 1; // オートインクリメントのリセット
+
 ```
 
 起動後、import.sqlをmysqlで実行

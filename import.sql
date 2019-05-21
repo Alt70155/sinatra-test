@@ -6,6 +6,7 @@ CREATE TABLE posts (
   body TEXT NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
+  top_picture VARCHAR(255) NOT NULL,
   PRIMARY KEY(id)
 );
 
@@ -14,3 +15,5 @@ CREATE TABLE categories (
   cate_name VARCHAR(255) NOT NULL,
   PRIMARY KEY(cate_id)
 );
+
+ALTER TABLE posts ADD top_picture varchar(255) NOT NULL;
