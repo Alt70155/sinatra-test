@@ -18,7 +18,7 @@ gem 'mysql2'
 gemをインストールする
 
 ```bash
-bundle install --path vendor/bundle
+sudo bundle install --path vendor/bundle
 ```
 
 optionでpathを指定している理由は、システムにインストールし過ぎるとgemがカオスになるらしく、bundlerの推奨環境としてvender/bundle以下に個別に管理するようにしたほうが良いらしい。(要参考)
