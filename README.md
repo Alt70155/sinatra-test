@@ -124,3 +124,7 @@ app.rbやirbでrequireを実行する場合はbundle execが必要になる。
 bundle exec ruby app.rb
 bundle exec irb
 ```
+
+公式の参考リンク
+https://github.com/vmg/redcarpet
+http://sinatrarb.com/intro-ja.html

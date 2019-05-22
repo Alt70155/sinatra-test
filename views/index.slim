@@ -4,17 +4,20 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   .title-body-content
     / nameの値をparamsで取得する
     p タイトル
-    input.title type="text" name="title"
+    input.title type="text" name="title" value="title"
     br
     p 本文
-    textarea.body type="text" name="body"
+    textarea.body type="text" name="body" body
   br
   p カテゴリーを選択
   - @category.each_with_index do |cate, i|
     p
-      input type="radio" name="cate_id" value="#{i+=1}" 　
+      - if i == 3
+        input type="radio" name="cate_id" value="#{i+=1}" checked="checked"
+      - else
+        input type="radio" name="cate_id" value="#{i+=1}"
       = cate.cate_name
 
-  input type="file" name="file"
+  input type="file" name="file" accept="image/*"
   br
   input type="submit" value="投稿"

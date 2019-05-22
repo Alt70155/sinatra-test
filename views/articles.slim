@@ -5,7 +5,7 @@
   h2 タイトル
   p= @post.title
   h2 本文
-  p== @post_body_html
+  p== markdown(@post.body)
   h2 投稿日
   p= @post.created_at
 
