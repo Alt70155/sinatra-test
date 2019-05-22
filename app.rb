@@ -13,7 +13,9 @@ ActiveRecord::Base.configurations = YAML.load_file('database.yml')
 ActiveRecord::Base.establish_connection(:development)
 
 class Post < ActiveRecord::Base
-  # validates_presence_of :title
+  validates_presence_of :title, :body, :top_picture
+  validates :title, length: { in: 1..75 }
+  validates :body,  length: { in: 1..20000 }
   before_validation :test # save直前に実行される
 
   private
@@ -35,9 +37,9 @@ end
 
 post '/article_post' do
   post_data = Post.new(
+    cate_id:     params[:cate_id],
     title:       params[:title],
     body:        params[:body],
-    cate_id:     params[:cate_id],
     top_picture: params[:file][:filename]
   )
   if post_data.save

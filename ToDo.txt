@@ -5,15 +5,11 @@
 ・POSTSの中身を空にする
 
 ================================================
-ok・画像名を格納するカラムをpostsモデルに追加する
-
-ok・markdown変換処理(redcarpet)
 
 ・画像サイズとフォーマット(jpg, png)に対するバリデーションを実装
  - inputにacceptを追加した
- -
-
- ・createからsaveに変更する
+ - モデルにvalidateを追加
+・エラー内容が.errors.messagesで受け取れるのでそれをviewで表示する
 
 ・Thinを入れる
 
@@ -26,3 +22,9 @@ ok・markdown変換処理(redcarpet)
 ・migrationを作成する
 
 ・time zoneを日本にする
+
+ok・画像名を格納するカラムをpostsモデルに追加する
+
+ok・markdown変換処理(redcarpet)
+
+ok・createからsaveに変更する
