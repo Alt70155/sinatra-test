@@ -13,15 +13,15 @@ ActiveRecord::Base.configurations = YAML.load_file('database.yml')
 ActiveRecord::Base.establish_connection(:development)
 
 class Post < ActiveRecord::Base
-  validates_presence_of :title, :body, :top_picture
+  validates_presence_of :title, :body, :top_picture # 値が空じゃないか
   validates :title, length: { in: 1..75 }
   validates :body,  length: { in: 1..20000 }
-  before_validation :test # save直前に実行される
+  before_validation :file_valid # save直前に実行される
 
   private
 
-    def test
-      p 'ok'
+    def file_valid
+
     end
 
   private
@@ -36,23 +36,26 @@ get '/' do
 end
 
 post '/article_post' do
-  post_data = Post.new(
-    cate_id:     params[:cate_id],
-    title:       params[:title],
-    body:        params[:body],
-    top_picture: params[:file][:filename]
-  )
-  if post_data.save
-    # file受け取り
-    file = params[:file][:tempfile]
-    # file作成
-    File.open("public/img/#{post_data.top_picture}", 'wb') do |f|
-      f.write(file.read)
+  unless params[:file].nil?
+    post_data = Post.new(
+      cate_id:     params[:cate_id],
+      title:       params[:title],
+      body:        params[:body],
+      top_picture: params[:file][:filename]
+    )
+    if post_data.save
+      # file受け取り
+      file = params[:file][:tempfile]
+      # file作成
+      File.open("public/img/#{post_data.top_picture}", 'wb') do |f|
+        f.write(file.read)
+      end
+      redirect "/articles/#{post_data.id}"
+    else
+      redirect '/'
     end
-    redirect "/articles/#{post_data.id}"
-  else
-    redirect '/'
   end
+
 end
 
 get '/articles/:id' do

@@ -9,6 +9,9 @@
 ・画像サイズとフォーマット(jpg, png)に対するバリデーションを実装
  - inputにacceptを追加した
  - モデルにvalidateを追加
+ - jsでファイルを選択しない場合にsubmitできないようにした
+・jpg.pngのみにするのをサーバーサイドでも追加する
+
 ・エラー内容が.errors.messagesで受け取れるのでそれをviewで表示する
 
 ・Thinを入れる

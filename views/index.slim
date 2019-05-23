@@ -18,6 +18,19 @@ form method="post" action="/article_post" enctype="multipart/form-data"
         input type="radio" name="cate_id" value="#{i+=1}"
       = cate.cate_name
 
-  input type="file" name="file" accept="image/*"
+  input id="input_file"   type="file"   name="file" accept="image/*"
   br
-  input type="submit" value="投稿"
+  input id="input_submit" type="submit" value="投稿" disabled="disabled"
+
+javascript:
+  const inputFile   = document.querySelector('#input_file')
+  const inputSubmit = document.querySelector('#input_submit')
+
+  inputFile.addEventListener('change', () => {
+    // filesはファイルが選択されたら1になる
+    if (inputFile.files.length) {
+      inputSubmit.disabled = false
+    } else {
+      inputSubmit.disabled = true
+    }
+  })
