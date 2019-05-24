@@ -21,7 +21,6 @@ GEM
     multi_json (1.13.1)
     mustermann (1.0.3)
     mysql2 (0.5.2)
-    power_assert (1.1.4)
     rack (2.0.7)
     rack-protection (2.0.5)
       rack
@@ -47,8 +46,6 @@ GEM
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
     temple (0.8.1)
-    test-unit (3.3.3)
-      power_assert
     thread_safe (0.3.6)
     tilt (2.0.9)
     tzinfo (1.2.5)
@@ -59,6 +56,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  minitest
   mysql2
   rack-test
   redcarpet
@@ -66,7 +64,6 @@ DEPENDENCIES
   sinatra-activerecord
   sinatra-contrib
   slim
-  test-unit
 
 BUNDLED WITH
    2.0.1

@@ -12,4 +12,4 @@ gem 'sinatra-activerecord'
 gem 'mysql2'
 gem 'redcarpet'
 gem 'rack-test'
-gem 'test-unit' # test/unitで使う
+gem 'minitest'

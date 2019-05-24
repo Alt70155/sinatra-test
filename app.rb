@@ -5,7 +5,11 @@ require 'sinatra/activerecord'
 require 'redcarpet'
 require './helpers/markdown.rb'
 # enable :sessions　これだとダメらしい
-use Rack::Session::Cookie
+# use Rack::Session::Cookie
+# クッキー内のセッションデータはセッション秘密鍵(session secret)で署名されます。
+# Sinatraによりランダムな秘密鍵が個別に生成されるらしい
+# 個別で設定する場合は↓
+# set :session_secret, 'super secret'
 
 # database.ymlを読み込み
 ActiveRecord::Base.configurations = YAML.load_file('database.yml')

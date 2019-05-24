@@ -1,19 +1,26 @@
 require './app.rb'
-require 'test/unit'
+require 'minitest/autorun'
 require 'rack/test'
 
 ENV['APP_ENV'] = 'test'
 
-class AppTest < Test::Unit::TestCase
+class AppTest < MiniTest::Test
   include Rack::Test::Methods
 
   def app
     Sinatra::Application
   end
 
-  def test_it_says_hello_world
+  def setup
+  end
+
+  def test_if_form_is_displayed_on_top_page
     get '/'
     assert last_response.ok?
-    assert equal 'Hello World', last_response.body
+    assert_match %r[<input class="title"],   last_response.body
+    assert_match %r[<textarea class="body"], last_response.body
+    assert_match %r[<input name="cate_id"],  last_response.body
+    assert_match %r[<input accept="image/],  last_response.body
+    assert_match %r[<input disabled="disabled" id="input_submit"], last_response.body
   end
 end
