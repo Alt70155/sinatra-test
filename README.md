@@ -23,6 +23,18 @@ sudo bundle install --path vendor/bundle
 
 optionでpathを指定している理由は、システムにインストールし過ぎるとgemがカオスになるらしく、bundlerの推奨環境としてvender/bundle以下に個別に管理するようにしたほうが良いらしい。(要参考)
 
+bundle installでエラーが出た場合
+
+```bash
+sudo bundle install --path vendor/bundle
+require: cannot load such file -- test/unit (LoadError)
+```
+
+path指定をしているため、vendor/bundleに入っているgemしか使えないので、あるgemで別のgemを使う場合などにそれも別途インストールしなければいけない
+
+今回はrack-testでtest-unitも必要になる
+
+
 ## MySQL2を入れる場合
 
 An error occurred while installing mysql2 (0.5.2), and Bundler cannot continue.
@@ -65,11 +77,9 @@ sudo bundle install --path vendor/bundle
 
 import.sqlにSQLを記述
 
-MySQL起動
-
 ```Bash
-mysql.server start
-mysql -u root
+mysql.server start # MySQL起動
+mysql -u root # ログイン
 ```
 
 退出は\q
@@ -121,10 +131,10 @@ end
 app.rbやirbでrequireを実行する場合はbundle execが必要になる。
 
 ```bash
-bundle exec ruby app.rb
+bundle exec ruby app.rb -p 8080
 bundle exec irb
 ```
 
-公式の参考リンク
-https://github.com/vmg/redcarpet
-http://sinatrarb.com/intro-ja.html
+## 公式の参考リンク
+gem redcarpet https://github.com/vmg/redcarpet
+sinatra       http://sinatrarb.com/intro-ja.html
