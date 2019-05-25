@@ -29,7 +29,7 @@ class Post < ActiveRecord::Base
 
     def file_valid
       if self.top_picture !~ /.*\.(jpg|png|jpeg)$/
-        self.errors.add(:top_picture, "はjpg,jpeg,pngのみ")
+        self.errors.add(:top_picture, "is only jpg, jpeg, png")
       end
     end
 
@@ -62,6 +62,7 @@ post '/article_post' do
       redirect "/articles/#{@post_data.id}"
     else
       @category = Category.all
+      # render
       slim :index
     end
 

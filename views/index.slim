@@ -1,16 +1,20 @@
 h2.new-title 新しい記事投稿
 
-- if !@post_data.nil? && @post_data.errors.messages
-  = @post_data.errors.messages
+.error-messages-area
+  - if !@post_data.nil? && @post_data.errors.messages
+    ul
+    = @post_data.errors.full_messages.length
+    - @post_data.errors.full_messages.each do |error_message|
+      li= error_message
 
 form method="post" action="/article_post" enctype="multipart/form-data"
   .title-body-content
     / nameの値をparamsで取得する
     p タイトル
-    input.title type="text" name="title" value="title"
+    input.title type="text" name="title"
     br
     p 本文
-    textarea.body type="text" name="body" body
+    textarea.body type="text" name="body"
   br
   p カテゴリーを選択
   - @category.each_with_index do |cate, i|
