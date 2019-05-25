@@ -25,7 +25,7 @@ class Post < ActiveRecord::Base
   private
 
     def file_valid
-
+      p self
     end
 
   private
