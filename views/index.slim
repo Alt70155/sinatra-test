@@ -3,7 +3,6 @@ h2.new-title 新しい記事投稿
 .error-messages-area
   - if !@post_data.nil? && @post_data.errors.messages
     ul
-    = @post_data.errors.full_messages.length
     - @post_data.errors.full_messages.each do |error_message|
       li= error_message
 

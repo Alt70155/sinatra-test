@@ -7,7 +7,7 @@ require './helpers/markdown.rb'
 require 'rack-flash'
 enable :sessions
 use Rack::Flash
-# enable :sessions　これだとダメらしい
+# enable :sessions　これでダメな場合
 # use Rack::Session::Cookie
 # クッキー内のセッションデータはセッション秘密鍵(session secret)で署名されます。
 # Sinatraによりランダムな秘密鍵が個別に生成されるらしい
@@ -23,11 +23,11 @@ class Post < ActiveRecord::Base
   validates_presence_of :title, :body, :top_picture # 値が空じゃないか
   validates :title, length: { in: 1..75 }
   validates :body,  length: { in: 1..20000 }
-  before_validation :file_valid # save直前に実行される
+  before_validation :file_type_check # save直前に実行される
 
   private
 
-    def file_valid
+    def file_type_check
       if self.top_picture !~ /.*\.(jpg|png|jpeg)$/
         self.errors.add(:top_picture, "is only jpg, jpeg, png")
       end
