@@ -22,6 +22,8 @@ GEM
     mustermann (1.0.3)
     mysql2 (0.5.2)
     rack (2.0.7)
+    rack-flash3 (1.0.5)
+      rack
     rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
@@ -58,6 +60,7 @@ DEPENDENCIES
   activerecord
   minitest
   mysql2
+  rack-flash3
   rack-test
   redcarpet
   sinatra

@@ -4,6 +4,9 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'redcarpet'
 require './helpers/markdown.rb'
+require 'rack-flash'
+enable :sessions
+use Rack::Flash
 # enable :sessions　これだとダメらしい
 # use Rack::Session::Cookie
 # クッキー内のセッションデータはセッション秘密鍵(session secret)で署名されます。
@@ -25,10 +28,12 @@ class Post < ActiveRecord::Base
   private
 
     def file_valid
-      p self
+      if self.top_picture !~ /.*\.(jpg|png|jpeg)$/
+        self.errors.add(:top_picture, "はjpg,jpeg,pngのみ")
+      end
     end
 
-  private
+  # private
 end
 
 class Category < ActiveRecord::Base
@@ -41,25 +46,28 @@ end
 
 post '/article_post' do
   unless params[:file].nil?
-    post_data = Post.new(
+    @post_data = Post.new(
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
       top_picture: params[:file][:filename]
     )
-    if post_data.save
+
+    if @post_data.save
       # file受け取り
       file = params[:file][:tempfile]
       # file作成
-      File.open("public/img/#{post_data.top_picture}", 'wb') do |f|
-        f.write(file.read)
-      end
-      redirect "/articles/#{post_data.id}"
+      File.open("public/img/#{@post_data.top_picture}", 'wb') { |f| f.write(file.read) }
+      flash[:notice] = "投稿完了"
+      redirect "/articles/#{@post_data.id}"
     else
-      redirect '/'
+      @category = Category.all
+      slim :index
     end
-  end
 
+  else
+    redirect '/'
+  end
 end
 
 get '/articles/:id' do

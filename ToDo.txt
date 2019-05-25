@@ -26,6 +26,8 @@
 
 ・time zoneを日本にする
 
+・strong parametersについて考える
+
 ok・画像名を格納するカラムをpostsモデルに追加する
 
 ok・markdown変換処理(redcarpet)

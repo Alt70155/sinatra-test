@@ -1,6 +1,9 @@
 br
 a href="/" topへ
 
+- if flash[:notice]
+  h3= flash[:notice]
+
 .article-content
   br
   h2 ページ番号
