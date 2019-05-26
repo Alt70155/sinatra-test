@@ -23,15 +23,11 @@ class Post < ActiveRecord::Base
   validates_presence_of :title, :body, :top_picture # 値が空じゃないか
   validates :title, length: { in: 1..75 }
   validates :body,  length: { in: 1..20000 }
-  before_validation :file_type_check # save直前に実行される
+  validates :top_picture, format: { with: /.*\.(jpg|png|jpeg)\z/,
+                                    message: "is only jpg, jpeg, png" }
+  # before_validation :file_type_check # save直前に実行される
 
   private
-
-    def file_type_check
-      if self.top_picture !~ /.*\.(jpg|png|jpeg)$/
-        self.errors.add(:top_picture, "is only jpg, jpeg, png")
-      end
-    end
 
   # private
 end
