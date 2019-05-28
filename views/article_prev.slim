@@ -1,0 +1,23 @@
+br
+a href="/" topへ
+
+.article-content
+  br
+  h2 ページ番号
+  p= @post_data.id
+  h2 タイトル
+  p= @post_data.title
+  h2 本文
+  p== markdown(@post_data.body)
+  h2 投稿日
+  p= @post_data.created_at
+
+  br
+  p カテゴリー
+  ul
+  - @category.each do |f|
+    li= f.cate_name
+
+  h3= "file_name: #{@post_data.top_picture}"
+
+  img src="/img/#{@post_data.top_picture}"

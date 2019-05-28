@@ -25,10 +25,9 @@ class Post < ActiveRecord::Base
   validates :body,  length: { in: 1..20000 }
   validates :top_picture, format: { with: /.*\.(jpg|png|jpeg)\z/,
                                     message: "is only jpg, jpeg, png" }
-  # before_validation :file_type_check # save直前に実行される
+  # before_validation :file_check # save直前に実行される
 
   private
-
   # private
 end
 
@@ -49,17 +48,22 @@ post '/article_post' do
       top_picture: params[:file][:filename]
     )
 
-    if @post_data.save
-      # file受け取り
-      file = params[:file][:tempfile]
-      # file作成
-      File.open("public/img/#{@post_data.top_picture}", 'wb') { |f| f.write(file.read) }
-      flash[:notice] = "投稿完了"
-      redirect "/articles/#{@post_data.id}"
+    if params[:submit] == '投稿'
+      if @post_data.save
+        # file受け取り
+        file = params[:file][:tempfile]
+        # file作成
+        File.open("public/img/#{@post_data.top_picture}", 'wb') { |f| f.write(file.read) }
+        flash[:notice] = "投稿完了"
+        redirect "/articles/#{@post_data.id}"
+      else
+        @category = Category.all
+        # render
+        slim :index
+      end
     else
-      @category = Category.all
-      # render
-      slim :index
+      @category = Category.where(cate_id: @post_data.cate_id)
+      slim :article_prev
     end
 
   else

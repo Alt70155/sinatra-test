@@ -26,9 +26,9 @@ form method="post" action="/article_post" enctype="multipart/form-data"
 
   input id="input_file"   type="file"   name="file" accept="image/*"
   br
-  input id="input_submit" type="submit" value="投稿" disabled="disabled"
+  input id="input_submit" type="submit" value="投稿" name="submit" onclick="submitAction('/article_post')" disabled="disabled"
   br
-  input id="input_submit" type="submit" value="プレビュー" name="prev_button" disabled="disabled"
+  input id="input_submit" type="submit" value="プレビュー" name="submit" onclick="submitAction('/article_prev')" disabled="disabled"
 
 javascript:
   const inputFile       = document.querySelector('#input_file')
@@ -42,3 +42,5 @@ javascript:
       inputSubmitList.forEach(submitBtn => submitBtn.disabled = true)
     }
   })
+
+  const submitAction = url => document.querySelector('form').setAttribute('action', url)
