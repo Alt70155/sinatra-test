@@ -41,33 +41,43 @@ end
 
 post '/article_post' do
   unless params[:file].nil?
-    @post_data = Post.new(
+    @post = Post.new(
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
       top_picture: params[:file][:filename]
     )
 
-    if params[:submit] == '投稿'
-      if @post_data.save
-        # file受け取り
-        file = params[:file][:tempfile]
-        # file作成
-        File.open("public/img/#{@post_data.top_picture}", 'wb') { |f| f.write(file.read) }
-        flash[:notice] = "投稿完了"
-        redirect "/articles/#{@post_data.id}"
-      else
-        @category = Category.all
-        # render
-        slim :index
-      end
+    if @post.save
+      # file受け取り
+      file = params[:file][:tempfile]
+      # file作成
+      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(file.read) }
+      flash[:notice] = "投稿完了"
+      redirect "/articles/#{@post.id}"
     else
-      @category = Category.where(cate_id: @post_data.cate_id)
-      slim :article_prev
+      @category = Category.all
+      # render
+      slim :index
     end
 
   else
     redirect '/'
+  end
+end
+
+post '/article_prev' do
+  unless params[:file].nil?
+    @post = Post.new(
+      id:          Post.count + 1,
+      cate_id:     params[:cate_id],
+      title:       params[:title],
+      body:        params[:body],
+      top_picture: params[:file][:filename]
+    )
+
+    @category = Category.where(cate_id: @post.cate_id)
+    slim :article_prev
   end
 end
 

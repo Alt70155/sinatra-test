@@ -10,10 +10,10 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   .title-body-content
     / nameの値をparamsで取得する
     p タイトル
-    input.title type="text" name="title"
+    input.title (type="text" name="title" required)
     br
     p 本文
-    textarea.body type="text" name="body"
+    textarea.body (type="text" name="body" required)
   br
   p カテゴリーを選択
   - @category.each_with_index do |cate, i|
