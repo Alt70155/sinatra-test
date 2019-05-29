@@ -1,7 +1,7 @@
 .error-messages-area
-  - if !@post_data.nil? && @post_data.errors.messages
+  - if !@post.nil? && @post.errors.messages
     ul
-    - @post_data.errors.full_messages.each do |error_message|
+    - @post.errors.full_messages.each do |error_message|
       li= error_message
 
 h2.new-title 新しい記事投稿
@@ -9,11 +9,12 @@ h2.new-title 新しい記事投稿
 form method="post" action="/article_post" enctype="multipart/form-data"
   .title-body-content
     / nameの値をparamsで取得する
+    / 入力必須にするrequired論理属性があるが、今回はエラーメッセージを表示させたいので鯖側で対処
     p タイトル
-    input.title (type="text" name="title" required)
+    input.title type="text" name="title"
     br
     p 本文
-    textarea.body (type="text" name="body" required)
+    textarea.body type="text" name="body"
   br
   p カテゴリーを選択
   - @category.each_with_index do |cate, i|
@@ -29,6 +30,7 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   input id="input_submit" type="submit" value="投稿" name="submit" onclick="submitAction('/article_post')" disabled="disabled"
   br
   input id="input_submit" type="submit" value="プレビュー" name="submit" onclick="submitAction('/article_prev')" disabled="disabled"
+  br
 
 javascript:
   const inputFile       = document.querySelector('#input_file')

@@ -40,6 +40,8 @@ get '/' do
 end
 
 post '/article_post' do
+  # 画像ファイル自体はモデルを持っていないため、存在チェックをコントローラで行う
+  # params[:file]がnilの場合、params[:file][:filename]で例外が発生する
   unless params[:file].nil?
     @post = Post.new(
       cate_id:     params[:cate_id],
