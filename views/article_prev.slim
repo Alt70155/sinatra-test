@@ -26,9 +26,4 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   input    type="text"  name="title"   style="display: none;" value="#{@post.title}"
   textarea type="text"  name="body"    style="display: none;" #{@post.body}
   input    type="radio" name="cate_id" style="display: none;" value="#{@post.cate_id}" checked="checked"
-  p ファイルをもう一度選択
-  input id="input_file"   type="file"   name="file" accept="image/*"
-  br
   input id="input_submit" type="submit" value="投稿" name="submit"
-
-<button type="button" onclick=history.back()>戻る</button>

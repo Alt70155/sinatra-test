@@ -78,8 +78,14 @@ post '/article_prev' do
       top_picture: params[:file][:filename]
     )
 
-    @category = Category.where(cate_id: @post.cate_id)
-    slim :article_prev
+    if @post.valid?
+      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+      @category = Category.where(cate_id: @post.cate_id)
+      slim :article_prev
+    else
+      @category = Category.all
+      slim :index
+    end
   end
 end
 
