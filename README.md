@@ -103,7 +103,7 @@ mysql -u root # ログイン
 source /フルパス/import.sql;
 ```
 
-database.ymlを作る
+## database.ymlを作る
 
 ```yml
 development:

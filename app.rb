@@ -39,29 +39,41 @@ get '/' do
   slim :index
 end
 
+get '/articles/:id' do
+  @post = Post.find(params[:id])
+  @category = Category.where(cate_id: @post.cate_id)
+  slim :articles
+end
+
 post '/article_post' do
   # 画像ファイル自体はモデルを持っていないため、存在チェックをコントローラで行う
   # params[:file]がnilの場合、params[:file][:filename]で例外が発生する
-  unless params[:file].nil?
+  # 両方nil
+  if params[:file] || params[:pic_name]
+    !!params[:pic_name] ? pic_name = params[:pic_name] : pic_name = params[:file][:filename]
     @post = Post.new(
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
-      top_picture: params[:file][:filename]
-    )
+      top_picture: pic_name)
 
-    if @post.save
-      # file受け取り
-      file = params[:file][:tempfile]
+    # TODO: params[:back]の判定を分けて、backの時は保存した画像を消す
+    if params[:back].nil? && @post.save
       # file作成
-      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(file.read) }
+      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else
+      if params[:back]
+        # TODO: 保存した画像を削除
+      end
       @category = Category.all
-      # render
+      # エラーメッセージを表示させたいのでレンダーする
+
       slim :index
     end
+
+  elsif params[:file_name].nil?
 
   else
     redirect '/'
@@ -71,26 +83,25 @@ end
 post '/article_prev' do
   unless params[:file].nil?
     @post = Post.new(
-      id:          Post.count + 1,
+      id:          Post.count + 1, # ダミー
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
-      top_picture: params[:file][:filename]
-    )
+      top_picture: params[:file][:filename])
 
+    # プレビューなので保存しないでvalid?だけチェックする
+    # 画像は保存する
     if @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       @category = Category.where(cate_id: @post.cate_id)
       slim :article_prev
     else
+      # エラーメッセージを表示させたいのでレンダーする
       @category = Category.all
       slim :index
     end
-  end
-end
 
-get '/articles/:id' do
-  @post = Post.find(params[:id])
-  @category = Category.where(cate_id: @post.cate_id)
-  slim :articles
+  else
+    redirect '/'
+  end
 end

@@ -1,6 +1,8 @@
 br
 a href="/" topへ
 
+h1 プレビュー
+
 .article-content
   br
   h2 ページ番号
@@ -22,8 +24,12 @@ a href="/" topへ
 
   img src="/img/#{@post.top_picture}"
 
-form method="post" action="/article_post" enctype="multipart/form-data"
-  input    type="text"  name="title"   style="display: none;" value="#{@post.title}"
-  textarea type="text"  name="body"    style="display: none;" #{@post.body}
-  input    type="radio" name="cate_id" style="display: none;" value="#{@post.cate_id}" checked="checked"
-  input id="input_submit" type="submit" value="投稿" name="submit"
+form method="post" action="/article_post"
+  input    type="text"   name="title"     style="display: none;" value="#{@post.title}"
+  textarea type="text"   name="body"      style="display: none;" #{@post.body}
+  input    type="radio"  name="cate_id"   style="display: none;" value="#{@post.cate_id}" checked="checked"
+  input    type="text"   name="pic_name"  style="display: none;" value="#{@post.top_picture}"
+  input    type="submit" id="input_submit" value="投稿"
+  br
+  input    type="submit" name="back" id="input_submit" value="修正"
+  br
