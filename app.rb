@@ -48,7 +48,7 @@ end
 post '/article_post' do
   # 画像ファイル自体はモデルを持っていないため、存在チェックをコントローラで行う
   # params[:file]がnilの場合、params[:file][:filename]で例外が発生する
-  # 両方nil
+  # prevから投稿する場合、params[:pic_name]にファイル名を格納
   if params[:file] || params[:pic_name]
     !!params[:pic_name] ? pic_name = params[:pic_name] : pic_name = params[:file][:filename]
     @post = Post.new(
@@ -64,12 +64,9 @@ post '/article_post' do
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else
-      if params[:back]
-        # TODO: 保存した画像を削除
-      end
+      File.delete("public/img/#{@post.top_picture}") if params[:back]
       @category = Category.all
       # エラーメッセージを表示させたいのでレンダーする
-
       slim :index
     end
 
