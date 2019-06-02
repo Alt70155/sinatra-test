@@ -29,7 +29,11 @@ form method="post" action="/article_post" enctype="multipart/form-data"
         input type="radio" name="cate_id" value="#{i}"
       = cate.cate_name
 
-  input id="input_file"   type="file"   name="file" accept="image/*"
+  input id="top_picture"   type="file"   name="file" accept="image/*"
+  br
+  input id="article_img_files" type="file" name="article_img_files[]" multiple="multiple" accept="image/*"
+  br
+  span#article_img_files_span.error-messages-area
   br
   input id="input_submit" type="submit" value="投稿" name="submit" onclick="submitAction('/article_post')" disabled="disabled"
   br
@@ -37,14 +41,40 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   br
 
 javascript:
-  const inputFile       = document.querySelector('#input_file')
-  const inputSubmitList = document.querySelectorAll('#input_submit')
-  const textarea        = document.querySelector('textarea')
+  const topPicture       = document.querySelector('#top_picture')
+  const articleImgFiles  = document.querySelector('#article_img_files')
+  const submitList       = document.querySelectorAll('#input_submit')
+  const textArea         = document.querySelector('textarea')
 
-  inputFile.addEventListener('change', () => {
-    // filesはファイルが選択されたら1になる
-    const isFile = inputFile.files.length ? false : true
-    inputSubmitList.forEach(submitBtn => submitBtn.disabled = isFile)
-  })
-
+  // formが投稿か修正かでサブミット先を変更する
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
+
+  const imageSelectedDecision = () => {
+    let isTopPicture = true
+    let matchLen = 0
+
+    topPicture.addEventListener('change', () => isTopPicture = Boolean(topPicture.files.length))
+
+    articleImgFiles.addEventListener('change', () => {
+      const fileLen = articleImgFiles.files.length
+      // top_pictureと記事内の画像数にあった画像が選択された場合にサブミットボタンを有効化する
+      const isLockedSubmit = fileLen === matchLen && isTopPicture ? false : true
+      submitList.forEach(submitBtn => submitBtn.disabled = isLockedSubmit)
+
+      if (fileLen > matchLen) {
+        const error = document.querySelector('#article_img_files_span')
+        error.textContent = '本文に挿入されている画像より多いです'
+      } else if (fileLen < matchLen) {
+        error.textContent = '本文に挿入されている画像より少ないです'
+      } else {
+        error.textContent = ''
+      }
+    })
+
+    textArea.addEventListener('keyup', () => {
+        // ![]()がいくつかを数える
+        match = textArea.value.match(/!\[.*\]\(.*\)/g)
+        if (match) matchLen = match.length
+    })
+  }
+  imageSelectedDecision()
