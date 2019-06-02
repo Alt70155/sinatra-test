@@ -57,10 +57,10 @@ post '/article_post' do
       body:        params[:body],
       top_picture: pic_name)
 
-    # TODO: params[:back]の判定を分けて、backの時は保存した画像を消す
     if params[:back].nil? && @post.save
       # file作成
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else

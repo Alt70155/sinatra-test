@@ -39,14 +39,12 @@ form method="post" action="/article_post" enctype="multipart/form-data"
 javascript:
   const inputFile       = document.querySelector('#input_file')
   const inputSubmitList = document.querySelectorAll('#input_submit')
+  const textarea        = document.querySelector('textarea')
 
   inputFile.addEventListener('change', () => {
     // filesはファイルが選択されたら1になる
-    if (inputFile.files.length) {
-      inputSubmitList.forEach(submitBtn => submitBtn.disabled = false)
-    } else {
-      inputSubmitList.forEach(submitBtn => submitBtn.disabled = true)
-    }
+    const isFile = inputFile.files.length ? false : true
+    inputSubmitList.forEach(submitBtn => submitBtn.disabled = isFile)
   })
 
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
