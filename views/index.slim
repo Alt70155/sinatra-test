@@ -18,63 +18,72 @@ form method="post" action="/article_post" enctype="multipart/form-data"
     p 本文
     textarea.body type="text" name="body" = @post.nil? ? '' : @post.body
     br
-  p カテゴリーを選択
-  - @category.each_with_index do |cate, i|
-    - i += 1
-    - @post.nil? ? radio_val = 1 : radio_val = @post.cate_id
-    p
-      - if i == radio_val
-        input type="radio" name="cate_id" value="#{i}" checked="checked"
-      - else
-        input type="radio" name="cate_id" value="#{i}"
-      = cate.cate_name
+  / p カテゴリーを選択
+  / - @category.each_with_index do |cate, i|
+  /   - i += 1
+  /   - @post.nil? ? radio_val = 1 : radio_val = @post.cate_id
+  /   p
+  /     - if i == radio_val
+  /       input type="radio" name="cate_id" value="#{i}" checked="checked"
+  /     - else
+  /       input type="radio" name="cate_id" value="#{i}"
+  /     = cate.cate_name
 
-  input id="top_picture"   type="file"   name="file" accept="image/*"
+  p ・トップ画像
+  input id="top_picture" type="file" name="file" accept="image/*"
   br
-  input id="article_img_files" type="file" name="article_img_files[]" multiple="multiple" accept="image/*"
+  .image-in-the-article-input
+    p ・記事内画像
+    input id="article_img_files" type="file" name="article_img_files[]" multiple="multiple" accept="image/*"
+    br
+    span#article_img_files_span.error-messages-area
   br
-  span#article_img_files_span.error-messages-area
+  input class="input_submit" type="submit" value="投稿" name="submit" onclick="submitAction('/article_post')" disabled="disabled"
   br
-  input id="input_submit" type="submit" value="投稿" name="submit" onclick="submitAction('/article_post')" disabled="disabled"
-  br
-  input id="input_submit" type="submit" value="プレビュー" name="submit" onclick="submitAction('/article_prev')" disabled="disabled"
+  input class="input_submit" type="submit" value="プレビュー" name="submit" onclick="submitAction('/article_prev')" disabled="disabled"
   br
 
 javascript:
   const topPicture       = document.querySelector('#top_picture')
   const articleImgFiles  = document.querySelector('#article_img_files')
-  const submitList       = document.querySelectorAll('#input_submit')
+  const submitList       = document.querySelectorAll('.input_submit')
   const textArea         = document.querySelector('textarea')
+  const error            = document.querySelector('#article_img_files_span')
 
   // formが投稿か修正かでサブミット先を変更する
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
 
-  const imageSelectedDecision = () => {
-    let isTopPicture = true
-    let matchLen = 0
-
-    topPicture.addEventListener('change', () => isTopPicture = Boolean(topPicture.files.length))
-
-    articleImgFiles.addEventListener('change', () => {
-      const fileLen = articleImgFiles.files.length
-      // top_pictureと記事内の画像数にあった画像が選択された場合にサブミットボタンを有効化する
-      const isLockedSubmit = fileLen === matchLen && isTopPicture ? false : true
-      submitList.forEach(submitBtn => submitBtn.disabled = isLockedSubmit)
-
-      if (fileLen > matchLen) {
-        const error = document.querySelector('#article_img_files_span')
-        error.textContent = '本文に挿入されている画像より多いです'
-      } else if (fileLen < matchLen) {
-        error.textContent = '本文に挿入されている画像より少ないです'
-      } else {
-        error.textContent = ''
-      }
-    })
-
-    textArea.addEventListener('keyup', () => {
-        // ![]()がいくつかを数える
-        match = textArea.value.match(/!\[.*\]\(.*\)/g)
-        if (match) matchLen = match.length
+  const isSubmitDisable = isLockedSubmit => {
+    submitList.forEach(submitBtn => {
+      submitBtn.disabled = isLockedSubmit
     })
   }
-  imageSelectedDecision()
+
+  const func = () => {
+    const match = textArea.value.match(/!\[.*\]\(.*\)/g)
+    if (match) {
+      // 記事内に画像がある場合
+      document.querySelector('.image-in-the-article-input').style.display = 'block'
+      const articleImgLen = articleImgFiles.files.length
+      // 記事内画像数と選択された画像数が同じかつtop画像が選択されていたらsubmitを表示
+      articleImgLen === match.length && topPicture.files.length ? isSubmitDisable(false) : isSubmitDisable(true)
+      if (articleImgLen > match.length) {
+        error.textContent = '本文に挿入されている画像より多いです'
+      } else if (articleImgLen < match.length) {
+        error.textContent = '記事内画像を選択してください'
+      } else {
+        error.textContent = ""
+      }
+    } else {
+      // 記事内に画像がない場合
+      document.querySelector('.image-in-the-article-input').style.display = 'none'
+      if (topPicture.files.length) {
+        isSubmitDisable(false)
+      }
+    }
+  }
+
+  textArea.addEventListener('keyup', func)
+  articleImgFiles.addEventListener('change', func)
+  topPicture.addEventListener('change', func)
+  func()
