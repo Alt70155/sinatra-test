@@ -59,7 +59,7 @@ javascript:
     })
   }
 
-  const func = () => {
+  const articleImageDecisionIn = () => {
     const match = textArea.value.match(/!\[.*\]\(.*\)/g)
     if (match) {
       // 記事内に画像がある場合
@@ -72,7 +72,7 @@ javascript:
       } else if (articleImgLen < match.length) {
         error.textContent = '記事内画像を選択してください'
       } else {
-        error.textContent = ""
+        error.textContent = ''
       }
     } else {
       // 記事内に画像がない場合
@@ -82,8 +82,8 @@ javascript:
       }
     }
   }
-
-  textArea.addEventListener('keyup', func)
-  articleImgFiles.addEventListener('change', func)
-  topPicture.addEventListener('change', func)
-  func()
+  // todo:関数名直す・画像を選択した後に![]()を消した場合にファイルを送らないようにする
+  textArea.addEventListener('keyup', articleImageDecisionIn)
+  articleImgFiles.addEventListener('change', articleImageDecisionIn)
+  topPicture.addEventListener('change', articleImageDecisionIn)
+  articleImageDecisionIn()
