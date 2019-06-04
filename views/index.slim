@@ -44,11 +44,11 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   br
 
 javascript:
-  const topPicture       = document.querySelector('#top_picture')
-  const articleImgFiles  = document.querySelector('#article_img_files')
-  const submitList       = document.querySelectorAll('.input_submit')
-  const textArea         = document.querySelector('textarea')
-  const error            = document.querySelector('#article_img_files_span')
+  const topPicture  = document.querySelector('#top_picture')
+  const articleImg  = document.querySelector('#article_img_files')
+  const submitList  = document.querySelectorAll('.input_submit')
+  const textArea    = document.querySelector('textarea')
+  const errorArea       = document.querySelector('#article_img_files_span')
 
   // formが投稿か修正かでサブミット先を変更する
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
@@ -60,19 +60,22 @@ javascript:
   }
 
   const articleImageDecisionIn = () => {
+    // 記事内画像![]()を検索
     const match = textArea.value.match(/!\[.*\]\(.*\)/g)
     if (match) {
       // 記事内に画像がある場合
       document.querySelector('.image-in-the-article-input').style.display = 'block'
-      const articleImgLen = articleImgFiles.files.length
+      const selectedImgLen = articleImg.files.length
+      const matchImgTagLen = match.length
       // 記事内画像数と選択された画像数が同じかつtop画像が選択されていたらsubmitを表示
-      articleImgLen === match.length && topPicture.files.length ? isSubmitDisable(false) : isSubmitDisable(true)
-      if (articleImgLen > match.length) {
-        error.textContent = '本文に挿入されている画像より多いです'
-      } else if (articleImgLen < match.length) {
-        error.textContent = '記事内画像を選択してください'
+      const isLockedSubmit = !(selectedImgLen === matchImgTagLen && topPicture.files.length)
+      isSubmitDisable(isLockedSubmit)
+      if (selectedImgLen > matchImgTagLen) {
+        errorArea.textContent = '本文に挿入されている画像より多いです'
+      } else if (selectedImgLen < matchImgTagLen) {
+        errorArea.textContent = '記事内画像を選択してください'
       } else {
-        error.textContent = ''
+        errorArea.textContent = ''
       }
     } else {
       // 記事内に画像がない場合
@@ -82,8 +85,8 @@ javascript:
       }
     }
   }
-  // todo:関数名直す・画像を選択した後に![]()を消した場合にファイルを送らないようにする
+  // todo:画像を選択した後に![]()を消した場合にファイルを送らないようにする
   textArea.addEventListener('keyup', articleImageDecisionIn)
-  articleImgFiles.addEventListener('change', articleImageDecisionIn)
+  articleImg.addEventListener('change', articleImageDecisionIn)
   topPicture.addEventListener('change', articleImageDecisionIn)
   articleImageDecisionIn()
