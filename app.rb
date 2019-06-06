@@ -48,7 +48,7 @@ end
 post '/article_post' do
   # 画像ファイル自体はモデルを持っていないため、存在チェックをコントローラで行う
   # params[:file]がnilの場合、params[:file][:filename]で例外が発生する
-  # prevから投稿する場合、params[:pic_name]にファイル名を格納
+  # prevから投稿する場合、画像は保存してあるのでparams[:pic_name]にファイル名を格納してそれを使う
   if params[:file] || params[:pic_name]
     !!params[:pic_name] ? pic_name = params[:pic_name] : pic_name = params[:file][:filename]
     @post = Post.new(
@@ -69,9 +69,6 @@ post '/article_post' do
       # エラーメッセージを表示させたいのでレンダーする
       slim :index
     end
-
-  elsif params[:file_name].nil?
-
   else
     redirect '/'
   end
@@ -86,14 +83,13 @@ post '/article_prev' do
       body:        params[:body],
       top_picture: params[:file][:filename])
 
-    # プレビューなので保存しないでvalid?だけチェックする
-    # 画像は保存する
+    # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
     if @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       @category = Category.where(cate_id: @post.cate_id)
       slim :article_prev
     else
-      # エラーメッセージを表示させたいのでレンダーする
+      # エラーメッセージを表示させたいのでレンダリング
       @category = Category.all
       slim :index
     end

@@ -18,16 +18,17 @@ form method="post" action="/article_post" enctype="multipart/form-data"
     p 本文
     textarea.body type="text" name="body" = @post.nil? ? '' : @post.body
     br
-  / p カテゴリーを選択
-  / - @category.each_with_index do |cate, i|
-  /   - i += 1
-  /   - @post.nil? ? radio_val = 1 : radio_val = @post.cate_id
-  /   p
-  /     - if i == radio_val
-  /       input type="radio" name="cate_id" value="#{i}" checked="checked"
-  /     - else
-  /       input type="radio" name="cate_id" value="#{i}"
-  /     = cate.cate_name
+
+  p カテゴリーを選択
+  - @category.each_with_index do |cate, i|
+    - i += 1
+    - @post.nil? ? radio_val = 1 : radio_val = @post.cate_id
+    p
+      - if i == radio_val
+        input type="radio" name="cate_id" value="#{i}" checked="checked"
+      - else
+        input type="radio" name="cate_id" value="#{i}"
+      = cate.cate_name
 
   p ・トップ画像
   input id="top_picture" type="file" name="file" accept="image/*"
@@ -44,29 +45,28 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   br
 
 javascript:
-  const topPicture  = document.querySelector('#top_picture')
-  const articleImg  = document.querySelector('#article_img_files')
-  const submitList  = document.querySelectorAll('.input_submit')
-  const textArea    = document.querySelector('textarea')
-  const errorArea       = document.querySelector('#article_img_files_span')
+  const topPicture = document.querySelector('#top_picture')
+  const articleImg = document.querySelector('#article_img_files')
+  const textArea   = document.querySelector('textarea')
+  const errorArea  = document.querySelector('#article_img_files_span')
 
   // formが投稿か修正かでサブミット先を変更する
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
 
   const isSubmitDisable = isLockedSubmit => {
-    submitList.forEach(submitBtn => {
+    document.querySelectorAll('.input_submit').forEach(submitBtn => {
       submitBtn.disabled = isLockedSubmit
     })
   }
 
   const articleImageDecisionIn = () => {
     // 記事内画像![]()を検索
-    const match = textArea.value.match(/!\[.*\]\(.*\)/g)
-    if (match) {
+    const matchImgTag = textArea.value.match(/!\[.*\]\(.*\)/g)
+    if (matchImgTag) {
       // 記事内に画像がある場合
       document.querySelector('.image-in-the-article-input').style.display = 'block'
       const selectedImgLen = articleImg.files.length
-      const matchImgTagLen = match.length
+      const matchImgTagLen = matchImgTag.length
       // 記事内画像数と選択された画像数が同じかつtop画像が選択されていたらsubmitを表示
       const isLockedSubmit = !(selectedImgLen === matchImgTagLen && topPicture.files.length)
       isSubmitDisable(isLockedSubmit)
