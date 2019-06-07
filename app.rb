@@ -61,7 +61,6 @@ post '/article_post' do
     if params[:back].nil? && @post.save
       # file作成
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else
@@ -84,18 +83,33 @@ post '/article_prev' do
       body:        params[:body],
       top_picture: params[:file][:filename])
 
-    @x = article_img_valid?(@post.body, params[:article_img_files])
-
-    # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
-    if @post.valid?
-      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-      @category = Category.where(cate_id: @post.cate_id)
-      slim :article_prev
+    if !(params[:article_img_files].nil?) && article_img_valid?(@post.body, params[:article_img_files])
+      if @post.valid?
+        # todo:記事内画像も保存・削除する処理を作る
+        File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+        @category = Category.where(cate_id: @post.cate_id)
+        slim :article_prev
+      else
+        @category = Category.all
+        slim :index
+      end
     else
-      # エラーメッセージを表示させたいのでレンダリング
       @category = Category.all
       slim :index
     end
+    # unless params[:article_img_files].nil?
+    #   if article_img_valid?(@post.body, params[:article_img_files])
+    # # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
+    # if @post.valid?
+    #   todo:記事内画像も保存・削除する処理を作る
+    #   File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+    #   @category = Category.where(cate_id: @post.cate_id)
+    #   slim :article_prev
+    # else
+    #   # エラーメッセージを表示させたいのでレンダリング
+    #   @category = Category.all
+    #   slim :index
+    # end
 
   else
     redirect '/'
