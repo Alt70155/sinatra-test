@@ -64,7 +64,10 @@ post '/article_post' do
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else
-      File.delete("public/img/#{@post.top_picture}") if params[:back]
+      if params[:back]
+        # TODO：リロードするとエラーがでるから直す
+        File.delete("public/img/#{@post.top_picture}")
+      end
       @category = Category.all
       # エラーメッセージを表示させたいのでレンダーする
       slim :index
@@ -83,20 +86,35 @@ post '/article_prev' do
       body:        params[:body],
       top_picture: params[:file][:filename])
 
-    if !(params[:article_img_files].nil?) && article_img_valid?(@post.body, params[:article_img_files])
-      if @post.valid?
-        # todo:記事内画像も保存・削除する処理を作る
-        File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-        @category = Category.where(cate_id: @post.cate_id)
-        slim :article_prev
-      else
-        @category = Category.all
-        slim :index
-      end
+    if (params[:article_img_files].nil? || article_img_valid?(@post.body, params[:article_img_files])) && @post.valid?
+      File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+      @category = Category.where(cate_id: @post.cate_id)
+      slim :article_prev
     else
       @category = Category.all
       slim :index
     end
+
+    # if @post.body.scan(/!\[\S*\]\(\S*\)/).length == 0
+    #   if @post.valid?
+    #     File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+    #     @category = Category.where(cate_id: @post.cate_id)
+    #     slim :article_prev
+    #   else
+    #     @category = Category.all
+    #     slim :index
+    #   end
+    # else
+    #   if @post.valid? && !params[:article_img_files].nil? && article_img_valid?(@post.body, params[:article_img_files])
+    #     File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+    #     @category = Category.where(cate_id: @post.cate_id)
+    #     slim :article_prev
+    #   else
+    #     @category = Category.all
+    #     slim :index
+    #   end
+    # end
+
     # unless params[:article_img_files].nil?
     #   if article_img_valid?(@post.body, params[:article_img_files])
     # # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
