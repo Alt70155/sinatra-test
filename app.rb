@@ -78,58 +78,25 @@ post '/article_post' do
 end
 
 post '/article_prev' do
-  unless params[:file].nil?
+  if params[:file]
     @post = Post.new(
       id:          Post.count + 1, # ダミー
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
       top_picture: params[:file][:filename])
-
+    # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
     if (params[:article_img_files].nil? || article_img_valid?(@post.body, params[:article_img_files])) && @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       @category = Category.where(cate_id: @post.cate_id)
       slim :article_prev
     else
+      # エラーメッセージを表示させたいのでレンダリング
       @category = Category.all
       slim :index
     end
-
-    # if @post.body.scan(/!\[\S*\]\(\S*\)/).length == 0
-    #   if @post.valid?
-    #     File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-    #     @category = Category.where(cate_id: @post.cate_id)
-    #     slim :article_prev
-    #   else
-    #     @category = Category.all
-    #     slim :index
-    #   end
-    # else
-    #   if @post.valid? && !params[:article_img_files].nil? && article_img_valid?(@post.body, params[:article_img_files])
-    #     File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-    #     @category = Category.where(cate_id: @post.cate_id)
-    #     slim :article_prev
-    #   else
-    #     @category = Category.all
-    #     slim :index
-    #   end
-    # end
-
-    # unless params[:article_img_files].nil?
-    #   if article_img_valid?(@post.body, params[:article_img_files])
-    # # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
-    # if @post.valid?
-    #   todo:記事内画像も保存・削除する処理を作る
-    #   File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
-    #   @category = Category.where(cate_id: @post.cate_id)
-    #   slim :article_prev
-    # else
-    #   # エラーメッセージを表示させたいのでレンダリング
-    #   @category = Category.all
-    #   slim :index
-    # end
-
   else
     redirect '/'
   end
+
 end
