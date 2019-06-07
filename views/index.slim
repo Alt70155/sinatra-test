@@ -1,5 +1,3 @@
-h1= @back
-h1= @back2
 .error-messages-area
   - if !@post.nil? && @post.errors.messages
     ul
@@ -60,8 +58,8 @@ javascript:
   }
 
   const articleImageDecisionIn = () => {
-    // 記事内画像![]()を検索
-    const matchImgTag = textArea.value.match(/!\[.*\]\(.*\)/g)
+    // 記事内画像![]()を検索 カッコの間に空白が入るとNG
+    const matchImgTag = textArea.value.match(/!\[\S*\]\(\S*\)/g)
     if (matchImgTag) {
       // 記事内に画像がある場合
       document.querySelector('.image-in-the-article-input').style.display = 'block'

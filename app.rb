@@ -4,6 +4,7 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'redcarpet'
 require './helpers/markdown.rb'
+require './helpers/article_img_valid?.rb'
 require 'rack-flash'
 enable :sessions
 use Rack::Flash
@@ -82,6 +83,8 @@ post '/article_prev' do
       title:       params[:title],
       body:        params[:body],
       top_picture: params[:file][:filename])
+
+    @x = article_img_valid?(@post.body, params[:article_img_files])
 
     # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
     if @post.valid?
