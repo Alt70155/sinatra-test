@@ -32,7 +32,7 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   p ・トップ画像
   input id="top_picture" type="file" name="file" accept="image/*"
   br
-  .image-in-the-article-input
+  .article-imgs-input
     p ・記事内画像
     input id="article_img_files" type="file" name="article_img_files[]" multiple="multiple" accept="image/*"
     br
@@ -44,10 +44,11 @@ form method="post" action="/article_post" enctype="multipart/form-data"
   br
 
 javascript:
-  const topPicture = document.querySelector('#top_picture')
-  const articleImg = document.querySelector('#article_img_files')
-  const textArea   = document.querySelector('textarea')
-  const errorArea  = document.querySelector('#article_img_files_span')
+  const topPicture  = document.querySelector('#top_picture')
+  const articleImg  = document.querySelector('#article_img_files')
+  const textArea    = document.querySelector('textarea')
+  const errorArea   = document.querySelector('#article_img_files_span')
+  const inputImages = document.querySelector('.article-imgs-input')
 
   // formが投稿か修正かでサブミット先を変更する
   const submitAction = url => document.querySelector('form').setAttribute('action', url)
@@ -63,7 +64,7 @@ javascript:
     const matchImgTag = textArea.value.match(/!\[\S*\]\(\S*\)/g)
     if (matchImgTag) {
       // 記事内に画像がある場合
-      document.querySelector('.image-in-the-article-input').style.display = 'block'
+      articleImg.disabled = false
       const selectedImgLen = articleImg.files.length
       const matchImgTagLen = matchImgTag.length
       // 記事内画像数と選択された画像数が同じかつtop画像が選択されていたらsubmitを表示
@@ -78,7 +79,7 @@ javascript:
       }
     } else {
       // 記事内に画像がない場合
-      document.querySelector('.image-in-the-article-input').style.display = 'none'
+      articleImg.disabled = true
       if (topPicture.files.length) {
         isSubmitDisable(false)
       }
