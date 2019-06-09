@@ -134,7 +134,7 @@ app.rbやirbでrequireを実行する場合はbundle execが必要になる。
 bundle exec ruby app.rb -p 8080
 bundle exec irb
 # IPを指定
-bundle exec ruby app.rb -p -o 192.168.0.0
+bundle exec ruby app.rb -p 8080 -o 192.168.0.0
 ```
 
 ## 公式の参考リンク

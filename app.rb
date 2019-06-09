@@ -51,19 +51,28 @@ post '/article_post' do
   # params[:file]がnilの場合、params[:file][:filename]で例外が発生する
   # prevから投稿する場合、画像は保存してあるのでparams[:pic_name]にファイル名を格納してそれを使う
   if params[:file] || params[:pic_name]
-    !!params[:pic_name] ? pic_name = params[:pic_name] : pic_name = params[:file][:filename]
+    params[:pic_name] ? pic_name = params[:pic_name] : pic_name = params[:file][:filename]
     @post = Post.new(
       cate_id:     params[:cate_id],
       title:       params[:title],
       body:        params[:body],
       top_picture: pic_name)
 
-    if params[:back].nil? && @post.save
-      # file作成
+    img_files = params[:article_img_files]
+    # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
+    if (img_files.nil? || article_img_valid?(@post.body, img_files)) && params[:back].nil? && @post.save
+      # top画像ファイル保存
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+      # 記事内画像があればそれも保存
+      if img_files
+        img_files.each do |img|
+          File.open("public/img/#{img[:filename]}", 'wb') { |f| f.write(img[:tempfile].read) }
+        end
+      end
       flash[:notice] = "投稿完了"
       redirect "/articles/#{@post.id}"
     else
+      # プレビュー画面から修正に戻った場合
       if params[:back]
         # TODO：リロードするとエラーがでるから直す
         File.delete("public/img/#{@post.top_picture}")
@@ -94,12 +103,13 @@ post '/article_prev' do
     if (img_files.nil? || article_img_valid?(@post.body, img_files)) && @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       if img_files
-        ary = []
+        # 修正に戻った場合、記事内画像ファイルの名前をセッションで保持し、削除する
+        img_name_ary = []
         img_files.each do |img|
           File.open("public/img/#{img[:filename]}", 'wb') { |f| f.write(img[:tempfile].read) }
-          ary << img[:filename]
+          img_name_ary << img[:filename]
         end
-        session[:img_files] = ary
+        session[:img_files] = img_name_ary
       end
       @category = Category.where(cate_id: @post.cate_id)
       slim :article_prev
