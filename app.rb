@@ -6,9 +6,9 @@ require 'redcarpet'
 require './helpers/markdown.rb'
 require './helpers/article_img_valid?.rb'
 require 'rack-flash'
-enable :sessions
+# enable :sessions
 use Rack::Flash
-# enable :sessions　これでダメな場合
+enable :sessions # これでダメな場合
 # use Rack::Session::Cookie
 # クッキー内のセッションデータはセッション秘密鍵(session secret)で署名されます。
 # Sinatraによりランダムな秘密鍵が個別に生成されるらしい
@@ -67,6 +67,9 @@ post '/article_post' do
       if params[:back]
         # TODO：リロードするとエラーがでるから直す
         File.delete("public/img/#{@post.top_picture}")
+        if session[:img_files]
+          session[:img_files].each { |img_name| File.delete("public/img/#{img_name}") }
+        end
       end
       @category = Category.all
       # エラーメッセージを表示させたいのでレンダーする
@@ -85,9 +88,19 @@ post '/article_prev' do
       title:       params[:title],
       body:        params[:body],
       top_picture: params[:file][:filename])
+
+    img_files = params[:article_img_files]
     # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
-    if (params[:article_img_files].nil? || article_img_valid?(@post.body, params[:article_img_files])) && @post.valid?
+    if (img_files.nil? || article_img_valid?(@post.body, img_files)) && @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
+      if img_files
+        ary = []
+        img_files.each do |img|
+          File.open("public/img/#{img[:filename]}", 'wb') { |f| f.write(img[:tempfile].read) }
+          ary << img[:filename]
+        end
+        session[:img_files] = ary
+      end
       @category = Category.where(cate_id: @post.cate_id)
       slim :article_prev
     else
@@ -98,5 +111,4 @@ post '/article_prev' do
   else
     redirect '/'
   end
-
 end
