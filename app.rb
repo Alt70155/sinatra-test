@@ -74,10 +74,11 @@ post '/article_post' do
     else
       # プレビュー画面から修正に戻った場合
       if params[:back]
-        # TODO：リロードするとエラーがでるから直す
-        File.delete("public/img/#{@post.top_picture}")
+        File.delete("public/img/#{@post.top_picture}") if File.exist?("public/img/#{@post.top_picture}")
         if session[:img_files]
-          session[:img_files].each { |img_name| File.delete("public/img/#{img_name}") }
+          session[:img_files].each do |img_name|
+            File.delete("public/img/#{img_name}") if File.exist?("public/img/#{img_name}")
+          end
         end
       end
       @category = Category.all
@@ -100,7 +101,9 @@ post '/article_prev' do
 
     img_files = params[:article_img_files]
     # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
-    if (img_files.nil? || article_img_valid?(@post.body, img_files)) && @post.valid?
+    # 画像タグがない かつ 画像がなければ画像の検査はしない　それ以外の場合は全て画像を検査する
+    if ((@post.body.scan(/!\[\S*\]\(\S*\)/).length == 0 && img_files.nil?) \
+      || article_img_valid?(@post.body, img_files)) && @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       if img_files
         # 修正に戻った場合、記事内画像ファイルの名前をセッションで保持し、削除する
