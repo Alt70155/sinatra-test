@@ -8,7 +8,7 @@ require './helpers/article_img_valid?.rb'
 require 'rack-flash'
 # enable :sessions
 use Rack::Flash
-enable :sessions # これでダメな場合
+enable :sessions # これでダメな場合↓
 # use Rack::Session::Cookie
 # クッキー内のセッションデータはセッション秘密鍵(session secret)で署名されます。
 # Sinatraによりランダムな秘密鍵が個別に生成されるらしい
@@ -19,6 +19,8 @@ enable :sessions # これでダメな場合
 ActiveRecord::Base.configurations = YAML.load_file('database.yml')
 # developmentを設定
 ActiveRecord::Base.establish_connection(:development)
+Time.zone = "Tokyo"
+ActiveRecord::Base.default_timezone = :local
 
 class Post < ActiveRecord::Base
   validates_presence_of :title, :body, :top_picture # 値が空じゃないか
@@ -59,8 +61,8 @@ post '/article_post' do
       top_picture: pic_name)
 
     img_files = params[:article_img_files]
-    # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
-    if (img_files.nil? || article_img_valid?(@post.body, img_files)) && params[:back].nil? && @post.save
+    if ((@post.body.scan(/!\[\S*\]\(\S*\)/).length == 0 && img_files.nil?) \
+      || article_img_valid?(@post.body, img_files)) && params[:back].nil? && @post.save
       # top画像ファイル保存
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       # 記事内画像があればそれも保存
