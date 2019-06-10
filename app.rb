@@ -4,7 +4,7 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'redcarpet'
 require './helpers/markdown.rb'
-require './helpers/article_img_valid?.rb'
+require './helpers/is_not_include_image?.rb'
 require 'rack-flash'
 # enable :sessions
 use Rack::Flash
@@ -62,7 +62,7 @@ post '/article_post' do
 
     img_files = params[:article_img_files]
     if ((@post.body.scan(/!\[\S*\]\(\S*\)/).length == 0 && img_files.nil?) \
-      || article_img_valid?(@post.body, img_files)) && params[:back].nil? && @post.save
+      || is_not_include_image?(@post.body, img_files)) && params[:back].nil? && @post.save
       # top画像ファイル保存
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       # 記事内画像があればそれも保存
@@ -104,8 +104,7 @@ post '/article_prev' do
     img_files = params[:article_img_files]
     # プレビューなので保存しないでvalid?だけチェックし、画像は保存する
     # 画像タグがない かつ 画像がなければ画像の検査はしない　それ以外の場合は全て画像を検査する
-    if ((@post.body.scan(/!\[\S*\]\(\S*\)/).length == 0 && img_files.nil?) \
-      || article_img_valid?(@post.body, img_files)) && @post.valid?
+    if is_not_include_image?(@post.body, img_files) && @post.valid?
       File.open("public/img/#{@post.top_picture}", 'wb') { |f| f.write(params[:file][:tempfile].read) }
       if img_files
         # 修正に戻った場合、記事内画像ファイルの名前をセッションで保持し、削除する
