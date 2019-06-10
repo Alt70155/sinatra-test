@@ -17,6 +17,6 @@ helpers do
   # 拡張子は正しいか・画像タグと画像数が同じかをチェック
   def img_valid?(img_tag_ct, img_files)
     ary = img_files.map { |img| !(img[:filename] !~ /.*\.(jpg|png|jpeg)\z/) }
-    body_img_ct == img_files.length && img_files.length < 10 && ary.all?
+    img_tag_ct == img_files.length && img_files.length < 10 && ary.all?
   end
 end
